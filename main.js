@@ -1,15 +1,24 @@
 var stage;
 var gameWorld;
-var size = 1000;
+var size = {width: 100, height: 100};
 
-var queue;
+var imageList = [];
 
-function load(){
-    queue = new createjs.LoadQueue(false);
-    queue.on("complete", init, once=true);
-    var loadItem = new createjs.LoadItem();
-    loadItem.set({id:"testImage",src:"Images/Test.png"});
-    queue.loadFile(loadItem);
+function load(){	
+	var manifest = [
+		{src:"./Images/Test.png", id:"testImage"}
+	]
+	
+	var loader = new createjs.LoadQueue(false);
+	loader.on("complete", init, this);
+	loader.on("fileload", handleFileLoad, this)
+	loader.loadManifest(manifest);
+}
+
+function handleFileLoad(f){
+	if (f.item.type == "image"){
+		imageList[f.item.id] = f.result;
+	}
 }
 
 function init(){
@@ -23,12 +32,25 @@ function init(){
     
     stage.addChild(gameWorld);
     
-    //this.document.onkeydown = keyDown;
+    this.document.onkeydown = keyDown;
 }
 
 function keyDown(event){
-    alert("key");
-    
+    var key = event.keyCode;
+	
+    if (key === 65){
+		// A
+		gameWorld.x += 5;
+	} else if (key === 68){
+		// D
+		gameWorld.x -= 5;
+	} else if (key === 87){
+		// W
+		gameWorld.y += 5;
+	} else if (key === 83){
+		// S
+		gameWorld.y -= 5;
+	}
 }
 
 function tick(event){
@@ -36,38 +58,40 @@ function tick(event){
 }
 
 function generateWorld(){
-    map = new Array(size);
+    map = new Array(size.width);
     for (var i = 0; i < map.length; i++){
-        map[i] = new Array(size);
+        map[i] = new Array(size.height);
     }
     
-    var imageData = queue.getResult("testImage");
-    ssData.images.push(imageData);
+    var imageData = imageList["testImage"];
     
-    var testSheet = new createjs.SpriteSheet(generateSpriteSheet(ssData, 32, 32, 10, {exist:[0]}));
+    var testSheet = new createjs.SpriteSheet(generateSpriteSheet([imageData], 16, 16, 0, {exist:[0]}));
     
-    for (var i = 0; i < map.length; i++){
-        for (var j = 0; j < map.length; j++){
+    for (var i = 0; i < size.width; i++){
+        for (var j = 0; j < size.height; j++){
             var block;
             
             block = new createjs.Sprite(testSheet, "exist");
             
-            block.x = i * 32;
-            block.y = j * 32;
+            block.x = i * 16;
+            block.y = j * 16;
             gameWorld.addChild(block);
         }
     }
 }
 
 function generateSpriteSheet(source, w, h, fps, animation){
-    var img = new Image();
-    img.crossOrigin="Anonymous";
-    img.src = source;
     var data = {
-        images: [img],
+        images: source,
         frames: {width:w, height:h},
         framerate: fps,
         animations: animation
     }
     return data;
+}
+
+function randomNumber(min, max){
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }

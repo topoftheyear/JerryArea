@@ -1,6 +1,6 @@
 var stage;
 var gameWorld;
-var size = {width: 800, height: 800};
+var size = {width: 700, height: 300};
 var viewPort = {x:0, y:0, width:32, height:32};
 var viewWorld;
 
@@ -8,8 +8,8 @@ var imageList = [];
 
 function load(){	
 	var manifest = [
-		{src:"./Images/Test.png",  id:"testImage"}
-		//{src:"./Images/Test2.png", id:"testImage2"}
+		{src:"./Images/Test.png",  id:"testImage"},
+		{src:"./Images/Test2.png", id:"testImage2"}
 	];
 	
 	var loader = new createjs.LoadQueue(false);
@@ -69,10 +69,10 @@ function tick(event){
 }
 
 function draw(event){
-	var xstart = Math.floor(viewPort.x / 16) - 5;
-	var ystart = Math.floor(viewPort.y / 16) - 5;
-	var xend = viewPort.width + xstart + 6;
-	var yend = viewPort.height + ystart + 6;
+	var xstart = Math.floor(viewPort.x / 16) - 1;
+	var ystart = Math.floor(viewPort.y / 16) - 1;
+	var xend = viewPort.width + xstart + 5;
+	var yend = viewPort.height + ystart + 5;
 	if (xstart < 0){
 		xstart = 0;
 	}
@@ -109,17 +109,17 @@ function generateWorld(){
     }
     
     var imageData = imageList["testImage"];
-	//var imageData2 = imageList["testImage2"];
+	var imageData2 = imageList["testImage2"];
     
     var testSheet = new createjs.SpriteSheet(generateSpriteSheet([imageData], 16, 16, 0, {exist:[0]}));
-	//var testSheet2 = new createjs.SpriteSheet(generateSpriteSheet([imageData2], 16, 16, 0, {exist:[0]}));
+	var testSheet2 = new createjs.SpriteSheet(generateSpriteSheet([imageData2], 16, 16, 0, {exist:[0]}));
     
     for (var i = 0; i < size.width; i++){
         for (var j = 0; j < size.height; j++){
             var block;
 			var tempContainer = new createjs.Container();
             
-            if (randomNumber(1,3) === randomNumber(4,4)){
+            if (randomNumber(1,3) === randomNumber(1,3)){
 				block = new createjs.Sprite(testSheet2, "exist");
 			} else{
 				block = new createjs.Sprite(testSheet, "exist");

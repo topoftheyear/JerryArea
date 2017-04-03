@@ -1,15 +1,16 @@
 var stage;
 var gameWorld;
-var size = {width: 400, height: 400};
-var viewPort = {x:0, y:0, width:32, height:32, shape:null};
+var size = {width: 800, height: 800};
+var viewPort = {x:0, y:0, width:32, height:32};
 var viewWorld;
 
 var imageList = [];
 
 function load(){	
 	var manifest = [
-		{src:"./Images/Test.png", id:"testImage"}
-	]
+		{src:"./Images/Test.png",  id:"testImage"}
+		//{src:"./Images/Test2.png", id:"testImage2"}
+	];
 	
 	var loader = new createjs.LoadQueue(false);
 	loader.on("complete", init, this);
@@ -30,17 +31,12 @@ function init(){
     
     generateWorld();
 	
-	g = new createjs.Graphics();
-	viewPort.shape = new createjs.Shape(g.beginFill("white").drawRect(viewPort.x, viewPort.y, viewPort.width * 16, viewPort.height * 16));
-	viewPort.shape.alpha = 0.5;
-	
 	viewWorld.addChild(gameWorld);
     
     createjs.Ticker.setFPS(60);
     createjs.Ticker.addEventListener("tick", tick);
     
     stage.addChild(viewWorld);
-	stage.addChild(viewPort.shape);
 	stage.update();
     
     this.document.onkeydown = keyDown;
@@ -51,20 +47,20 @@ function keyDown(event){
 	
     if (key === 65){
 		// A
-		viewWorld.x += 16;
-		viewPort.x -= 1;
+		viewWorld.x += 10;
+		viewPort.x -= 10;
 	} else if (key === 68){
 		// D
-		viewWorld.x -= 16;
-		viewPort.x += 1;
+		viewWorld.x -= 10;
+		viewPort.x += 10;
 	} else if (key === 87){
 		// W
-		viewWorld.y += 16;
-		viewPort.y -= 1;
+		viewWorld.y += 10;
+		viewPort.y -= 10;
 	} else if (key === 83){
 		// S
-		viewWorld.y -= 16;
-		viewPort.y += 1;
+		viewWorld.y -= 10;
+		viewPort.y += 10;
 	}
 }
 
@@ -73,34 +69,33 @@ function tick(event){
 }
 
 function draw(event){
-	var xstart = viewPort.x - 10;
-	var ystart = viewPort.y - 10;
+	var xstart = Math.floor(viewPort.x / 16) - 5;
+	var ystart = Math.floor(viewPort.y / 16) - 5;
+	var xend = viewPort.width + xstart + 6;
+	var yend = viewPort.height + ystart + 6;
 	if (xstart < 0){
 		xstart = 0;
 	}
 	if (ystart < 0){
 		ystart = 0;
 	}
-	for (var i = xstart; i < viewPort.width + 10; i++){
-		for (var j = ystart; j < viewPort.height + 10; j++){
+	if (xend > size.width){
+		xend = size.width;
+	}
+	if (yend > size.height){
+		yend = size.height;
+	}
+	
+	for (var i = xstart; i < xend; i++){
+		for (var j = ystart; j < yend; j++){
 			if (map[i][j] != undefined){
 				var block = map[i][j];
-				var rect = viewPort.shape;
 				
-				var pt = block.localToLocal(block.x, block.y, rect);
-				var pt2 = block.localToLocal(block.x + 16, block.y + 16, rect);
-				
-				if (rect.hitTest(pt.x, pt.y) && rect.hitTest(pt2.x, pt2.y)){
-					block.alpha = 1;
-				} else{
-					block.alpha = 0.5;
-				}
-				
-				/*if ((block.x + 16 > rect.x || block.x < viewPort.width * 16 + viewPort.x) || (block.y + 16 > rect.y || block.y < viewPort.height * 16 + viewPort.y)){
+				if ((block.x + 16 > viewPort.x && block.x < viewPort.width * 16 + viewPort.x) && (block.y + 16 > viewPort.y && block.y < viewPort.height * 16 + viewPort.y)){
 					map[i][j].alpha = 1;
 				} else{
 					map[i][j].alpha = 0;
-				}*/
+				}
 			}
 		}
 	}
@@ -114,15 +109,21 @@ function generateWorld(){
     }
     
     var imageData = imageList["testImage"];
+	//var imageData2 = imageList["testImage2"];
     
     var testSheet = new createjs.SpriteSheet(generateSpriteSheet([imageData], 16, 16, 0, {exist:[0]}));
+	//var testSheet2 = new createjs.SpriteSheet(generateSpriteSheet([imageData2], 16, 16, 0, {exist:[0]}));
     
     for (var i = 0; i < size.width; i++){
         for (var j = 0; j < size.height; j++){
             var block;
 			var tempContainer = new createjs.Container();
             
-            block = new createjs.Sprite(testSheet, "exist");
+            if (randomNumber(1,3) === randomNumber(4,4)){
+				block = new createjs.Sprite(testSheet2, "exist");
+			} else{
+				block = new createjs.Sprite(testSheet, "exist");
+			}
             
 			tempContainer.addChild(block);
             tempContainer.x = i * 16;

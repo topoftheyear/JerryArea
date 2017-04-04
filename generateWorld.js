@@ -28,9 +28,11 @@ function generateWorld(){
 	// Generate a basic ground and sky
 	for (var i = 0; i < size.width; i++){
 		for (var j = 0; j < size.height; j++){
-			if (j > 50){
+			if (j > 100){
+                map[i][j].addChild(block = new createjs.Sprite(stoneSheet));
+            } else if (j > 50){
 				map[i][j].addChild(block = new createjs.Sprite(dirtSheet));
-			}
+            }
 		}
 	}
 }

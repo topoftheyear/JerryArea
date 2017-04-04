@@ -8,8 +8,9 @@ var imageList = [];
 
 function load(){	
 	var manifest = [
-		{src:"./Images/Test.png",  id:"testImage"},
-		{src:"./Images/Test2.png", id:"testImage2"}
+		{src:"./Images/Dirt.png",  id:"dirt"},
+		{src:"./Images/Grass.png", id:"grass"},
+		{src:"./Images/Stone.png", id:"stone"},
 	];
 	
 	var loader = new createjs.LoadQueue(false);
@@ -100,39 +101,6 @@ function draw(event){
 		}
 	}
 	stage.update();
-}
-
-function generateWorld(){
-    map = new Array(size.width);
-    for (var i = 0; i < map.length; i++){
-        map[i] = new Array(size.height);
-    }
-    
-    var imageData = imageList["testImage"];
-	var imageData2 = imageList["testImage2"];
-    
-    var testSheet = new createjs.SpriteSheet(generateSpriteSheet([imageData], 16, 16, 0, {exist:[0]}));
-	var testSheet2 = new createjs.SpriteSheet(generateSpriteSheet([imageData2], 16, 16, 0, {exist:[0]}));
-    
-    for (var i = 0; i < size.width; i++){
-        for (var j = 0; j < size.height; j++){
-            var block;
-			var tempContainer = new createjs.Container();
-            
-            if (randomNumber(1,3) === randomNumber(1,3)){
-				block = new createjs.Sprite(testSheet2, "exist");
-			} else{
-				block = new createjs.Sprite(testSheet, "exist");
-			}
-            
-			tempContainer.addChild(block);
-            tempContainer.x = i * 16;
-            tempContainer.y = j * 16;
-			tempContainer.alpha = 0;
-            gameWorld.addChild(tempContainer);
-			map[i][j] = tempContainer;
-        }
-    }
 }
 
 function generateSpriteSheet(source, w, h, fps, animation){

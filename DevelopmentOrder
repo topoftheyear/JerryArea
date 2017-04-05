@@ -1,0 +1,12 @@
+Development Order:
+
+1. Character in game
+2. Character movement and updated camera (free movement in any direction)
+3. Character and block collision
+4. Gravity and updated movement (traditional 2D side-scrolling platformer)
+5. Destroying blocks
+6. Placing blocks
+
+Side things:
+1. Interactable items
+2. Combat

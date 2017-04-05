@@ -31,6 +31,7 @@ function init(){
     stage = new createjs.Stage("canvas");
     
     generateWorld();
+	alert("The world is built");
 	
 	viewWorld.addChild(gameWorld);
     

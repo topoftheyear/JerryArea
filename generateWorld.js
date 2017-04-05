@@ -1,9 +1,13 @@
 function generateWorld(){
     function addBlock(i, j, block){
+		removeBlock(i, j);
+		map[i][j].addChild(block);
+	}
+	
+	function removeBlock(i, j){
 		if (map[i][j].numChildren > 0){
 			map[i][j].removeAllChildren();
 		}
-		map[i][j].addChild(block);
 	}
 	
 	map = new Array(size.width);
@@ -46,11 +50,16 @@ function generateWorld(){
 	alert("ground and sky added");
 	
 	// Generate hills
-	var startingHeight = randomNumber(20, 100);
+	var startingHeight = 25//randomNumber(20, 100);
 	for (var i = 0; i < size.width; i++){
-		for (var j = startingHeight; j <= 100; j++){
-			addBlock(i, j, block = new createjs.Sprite(dirtSheet));
+		for (var j = 0; j <= 100; j++){
+			if (j >= startingHeight){
+				addBlock(i, j, block = new createjs.Sprite(dirtSheet));
+			} else{
+				removeBlock(i,j);
+			}
 		}
+		
 		if (randomNumber(1,3) === randomNumber(1,3)){
 			startingHeight = randomNumber(startingHeight - 2, startingHeight + 2);
 		} else{
@@ -58,9 +67,9 @@ function generateWorld(){
 		}
 		
 		if (startingHeight > 100){
-			startingHeight = 100;
+			startingHeight = 99;
 		} else if (startingHeight < 20){
-			startingHeight = 20;
+			startingHeight = 21;
 		}
 	}
 	alert("hills made");

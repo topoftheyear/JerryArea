@@ -3,6 +3,7 @@ var gameWorld;
 var size = {width: 700, height: 300};
 var viewPort = {x:0, y:0, width:32, height:32};
 var viewWorld;
+var map;
 
 var imageList = [];
 
@@ -26,6 +27,7 @@ function handleFileLoad(f){
 }
 
 function init(){
+    alert("loaded");
     gameWorld = new createjs.Container();
 	viewWorld = new createjs.Container();
     stage = new createjs.Stage("canvas");

@@ -13,7 +13,7 @@ function generateWorld(){
 			console.log("BBBBBBBBBB");
 		}
 		else if (typeof(map[i][j]) === "undefined"){
-			console.log("CCCCCCCCCCCCC");
+			console.log("CCCCCCCCCC");
 			debugger;
 		}
 		if (typeof(map[i]) !== "undefined" && typeof(map[i][j]) !== "undefined" && map[i][j].numChildren > 0){
@@ -26,13 +26,11 @@ function generateWorld(){
         map[i] = new Array(size.height);
     }
     
-    var dirtData = imageList["dirt"];
-	var grassData = imageList["grass"];
-	var stoneData = imageList["stone"];
-    
-    var dirtSheet = new createjs.SpriteSheet(generateSpriteSheet([dirtData], 16, 16, 0, {exist:[0]}));
-	var grassSheet = new createjs.SpriteSheet(generateSpriteSheet([grassData], 16, 16, 0, {exist:[0]}));
-	var stoneSheet = new createjs.SpriteSheet(generateSpriteSheet([stoneData], 16, 16, 0, {exist:[0]}));
+    var dirtSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["dirt"]], 16, 16, 0, {exist:[0]}));
+	var grassSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["grass"]], 16, 16, 0, {exist:[0]}));
+	var stoneSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["stone"]], 16, 16, 0, {exist:[0]}));
+	var sandSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["sand"]], 16, 16, 0, {exist:[0]}));
+	var gravelSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["gravel"]], 16, 16, 0, {exist:[0]}));
     
 	// Fill the map with containers that will contain the block object
     for (var i = 0; i < size.width; i++){
@@ -43,7 +41,6 @@ function generateWorld(){
             tempContainer.y = j * 16;
 			tempContainer.alpha = 0;
             gameWorld.addChild(tempContainer);
-			//if (typeof(tempContainer) === "undefined"){}
 			map[i][j] = tempContainer;
         }
     }
@@ -122,84 +119,34 @@ function generateWorld(){
 		}
     }
     alert("stone layer varied");
-    
-    // For making holes or chunks of ore or stone or etc, try having a variable keep track of the total number of blocks 
-    // placed then decrease the chances of branching out based on that number, randomNumber(0, 1 + number / 4)?
-    // Try finding a spot inside the layer, i = randomNumber, j = randomNumber, and branch out using i +- 1 and j += 1 so that it wont be left or right biased
-    
-    // Or maybe
-    // i = random, j = random
-    // while(current < max)
-        // changeBlock(i,j,whatever)
-        // maybe also (i +- 1, j += 1, whatever)
-        // or (random i +- 1, random j +- 1, whatever)
-        // then current + however many
-        //
-        // then random a number to choose a direction
-        // switch (random)
-        // case #: i++
-        // case #: j++
-        // case #: i--
-        // case #: j--
-    // repeat until the max has been hit
-    // then repeat again until the chosen type max has been hit
 	
-	var numVeins = 30;
-	for (var a = 1; a <= numVeins; a++){
-		var currentPlaced = 0;
-		var maxPlaced = randomNumber(15,50);
-		var i = 0;
-		var j = 0;
-		while(map[i][j].numChildren != 1){
-			i = randomNumber(0, size.width - 1);
-			j = randomNumber(40, 100);
+	// Add desert
+	var start = randomNumber(0, 550);
+	var distance = randomNumber(50, 150);
+	var depth = 40;
+	for (var i = start; i < start + distance; i++){
+		if (i > (distance / 2) + start){
+			depth -= randomNumber(1,4);
+		} else{
+			depth += randomNumber(1,4);
 		}
-		
-		while (currentPlaced < maxPlaced){
-			addBlock(i, j, stoneSheet);
-			currentPlaced++;
-			
-			if (randomNumber(1,3) === randomNumber(1,3)){
-				if (i > 0){
-					addBlock(i - 1, j, stoneSheet);
-					currentPlaced++;
-				}
-			}
-			if (randomNumber(1,3) === randomNumber(1,3)){
-				if (i < size.width - 1){
-					addBlock(i + 1, j, stoneSheet);
-					currentPlaced++;
-				}
-			}
-			if (randomNumber(1,3) === randomNumber(1,3)){
-				addBlock(i, j - 1, stoneSheet);
-				currentPlaced++;
-			}
-			if (randomNumber(1,3) === randomNumber(1,3)){
-				addBlock(i, j + 1, stoneSheet);
-				currentPlaced++;
-			}
-			
-			switch (randomNumber(0,5)){
-				case 0:
-				case 1: if (i > 0){i--;} break;
-				case 2:
-				case 3: if (i < size.width - 1){i++;} break;
-				case 4:
-				case 5: break;
-			}
-			switch (randomNumber(0,5)){
-				case 0:
-				case 1: j--; break;
-				case 2:
-				case 3: j++; break;
-				case 4:
-				case 5: break;
+		for (var j = 0; j < 0 + depth; j++){
+			if (map[i][j].numChildren > 0 && map[i][j].getChildAt(0).spriteSheet === dirtSheet){
+				addBlock(i, j, sandSheet);
 			}
 		}
 	}
+	alert("desert added");
+	
+	// Make stone veins
+	veinGenerator(30, stoneSheet, "upper", [40,60]);
 	alert("stone veins added");
 	
+	// Make gravel veins
+	veinGenerator(50, gravelSheet, "all", [70,120]);
+	alert("gravel veins added");
+	
+	// Make caves
 	var numCaves = 50;
 	for (var a = 1; a <= numCaves; a++){
 		var currentPlaced = 0;
@@ -265,4 +212,73 @@ function generateWorld(){
 		}
 	}
 	alert("grassified");
+	
+	// Generates veins
+	function veinGenerator(numVeins, sheet, height, sizeBounds){
+		for (var a = 1; a <= numVeins; a++){
+			var currentPlaced = 0;
+			var maxPlaced = randomNumber(sizeBounds);
+			var i = 0;
+			var j = 0;
+			while(map[i][j].numChildren != 1){
+				i = randomNumber(0, size.width - 1);
+				if (height === "upper"){
+					j = randomNumber(40, 100);
+				} else if (height === "lower"){
+					j = randomNumber(200, 300);
+				} else if (height === "middle"){
+					j = randomNumber(100, 200);
+				} else if (height === "all"){
+					j = randomNumber(40, 300);
+				}
+			}
+		
+			while (currentPlaced < maxPlaced){
+				addBlock(i, j, sheet);
+				currentPlaced++;
+			
+				if (randomNumber(1,3) === randomNumber(1,3)){
+					if (i > 0){
+						addBlock(i - 1, j, sheet);
+						currentPlaced++;
+					}
+				}
+				if (randomNumber(1,3) === randomNumber(1,3)){
+					if (i < size.width - 1){
+						addBlock(i + 1, j, sheet);
+						currentPlaced++;
+					}
+				}
+				if (randomNumber(1,3) === randomNumber(1,3)){
+					if (j > 0){
+						addBlock(i, j - 1, sheet);
+						currentPlaced++;
+					}
+				}
+				if (randomNumber(1,3) === randomNumber(1,3)){
+					if (j < size.height - 1){
+						addBlock(i, j + 1, sheet);
+						currentPlaced++;
+					}
+				}
+			
+				switch (randomNumber(0,5)){
+					case 0:
+					case 1: if (i > 0){i--;} break;
+					case 2:
+					case 3: if (i < size.width - 1){i++;} break;
+					case 4:
+					case 5: break;
+				}
+				switch (randomNumber(0,5)){
+					case 0:
+					case 1: if (i > 0){j--;} break;
+					case 2:
+					case 3: if (j < size.height - 1){j++;} break;
+					case 4:
+					case 5: break;
+				}
+			}
+		}
+	}
 }

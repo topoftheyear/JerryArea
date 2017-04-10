@@ -12,6 +12,8 @@ function load(){
 		{src:"./Images/Dirt.png",  id:"dirt"},
 		{src:"./Images/Grass.png", id:"grass"},
 		{src:"./Images/Stone.png", id:"stone"},
+		{src:"./Images/Sand.png",  id:"sand"},
+		{src:"./Images/Gravel.png",id:"gravel"},
 	];
 	
 	var loader = new createjs.LoadQueue(false);
@@ -117,7 +119,13 @@ function generateSpriteSheet(source, w, h, fps, animation){
 }
 
 function randomNumber(min, max){
-    min = Math.ceil(min);
+	if (Array.isArray(min)){
+		var a = min;
+		min = a[0];
+		max = a[1];
+	}
+	
+	min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }

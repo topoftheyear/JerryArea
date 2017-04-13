@@ -1,2 +1,2 @@
-# unoptimizedtrash
-Oh no. Here we go again.
+# Jerry Area
+Jerry Seinfeld themed Terraria in javascript.

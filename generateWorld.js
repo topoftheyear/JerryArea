@@ -91,7 +91,7 @@ function generateWorld(){
 	alert("hills made");
     
     // Move stone layer similar to hills
-    var layerMin = 80;
+    var layerMin = 90;
     var layerMax = 120;
     var startingHeight = randomNumber(layerMin, layerMax);
     for (var i = 0; i < size.width; i++){

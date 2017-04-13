@@ -31,6 +31,11 @@ function generateWorld(){
 	var stoneSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["stone"]], 16, 16, 0, {exist:[0]}));
 	var sandSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["sand"]], 16, 16, 0, {exist:[0]}));
 	var gravelSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["gravel"]], 16, 16, 0, {exist:[0]}));
+	var coalSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["coal"]], 16, 16, 0, {exist:[0]}));
+	var ironSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["iron"]], 16, 16, 0, {exist:[0]}));
+	var goldSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["gold"]], 16, 16, 0, {exist:[0]}));
+	var diamondSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["diamond"]], 16, 16, 0, {exist:[0]}));
+	var waterSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["water"]], 16, 16, 6, {exist:[0,1,2]}));
     
 	// Fill the map with containers that will contain the block object
     for (var i = 0; i < size.width; i++){
@@ -139,12 +144,24 @@ function generateWorld(){
 	alert("desert added");
 	
 	// Make stone veins
-	veinGenerator(30, stoneSheet, "upper", [40,60]);
-	alert("stone veins added");
+	veinGenerator(30, stoneSheet, "up", [40,60]);
 	
 	// Make gravel veins
 	veinGenerator(50, gravelSheet, "all", [70,120]);
-	alert("gravel veins added");
+	
+	// Make coal veins
+	veinGenerator(70, coalSheet, "all", [5,30]);
+	
+	// Make iron veins
+	veinGenerator(70, ironSheet, "mid", [5,25]);
+	
+	// Make gold veins
+	veinGenerator(70, goldSheet, "low", [5,20]);
+	
+	// Make diamond veins
+	veinGenerator(30, diamondSheet, "low", [5,15]);
+	
+	alert("material veins added");
 	
 	// Make caves
 	var numCaves = 50;
@@ -222,14 +239,14 @@ function generateWorld(){
 			var j = 0;
 			while(map[i][j].numChildren != 1){
 				i = randomNumber(0, size.width - 1);
-				if (height === "upper"){
+				if (height === "up"){
 					j = randomNumber(40, 100);
-				} else if (height === "lower"){
-					j = randomNumber(200, 300);
-				} else if (height === "middle"){
+				} else if (height === "low"){
+					j = randomNumber(200, 299);
+				} else if (height === "mid"){
 					j = randomNumber(100, 200);
 				} else if (height === "all"){
-					j = randomNumber(40, 300);
+					j = randomNumber(40, 299);
 				}
 			}
 		

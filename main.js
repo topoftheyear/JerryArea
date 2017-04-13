@@ -9,11 +9,16 @@ var imageList = [];
 
 function load(){	
 	var manifest = [
-		{src:"./Images/Dirt.png",  id:"dirt"},
-		{src:"./Images/Grass.png", id:"grass"},
-		{src:"./Images/Stone.png", id:"stone"},
-		{src:"./Images/Sand.png",  id:"sand"},
-		{src:"./Images/Gravel.png",id:"gravel"},
+		{src:"./Images/Dirt.png",    id:"dirt"},
+		{src:"./Images/Grass.png",   id:"grass"},
+		{src:"./Images/Stone.png",   id:"stone"},
+		{src:"./Images/Sand.png",    id:"sand"},
+		{src:"./Images/Gravel.png",  id:"gravel"},
+		{src:"./Images/Coal.png",    id:"coal"},
+		{src:"./Images/Iron.png",    id:"iron"},
+		{src:"./Images/Gold.png",    id:"gold"},
+		{src:"./Images/Diamond.png", id:"diamond"},
+		{src:"./Images/Water.png",   id:"water"},
 	];
 	
 	var loader = new createjs.LoadQueue(false);

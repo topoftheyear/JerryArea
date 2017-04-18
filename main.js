@@ -3,6 +3,7 @@ var gameWorld;
 var size = {width: 700, height: 300};
 var viewPort = {x:0, y:0, width:32, height:32};
 var viewWorld;
+var background;
 var map;
 
 var imageList = [];
@@ -21,6 +22,7 @@ function load(){
 		{src:"./Images/Gold.png",    id:"gold"},
 		{src:"./Images/Diamond.png", id:"diamond"},
 		{src:"./Images/Water.png",   id:"water"},
+		{src:"./Images/mrkrabs.jpg", id:"krabs"},
 	];
 	
 	var loader = new createjs.LoadQueue(false);
@@ -39,13 +41,21 @@ function init(){
     alert("loaded");
     gameWorld = new createjs.Container();
 	viewWorld = new createjs.Container();
+	background = new createjs.Container();
     stage = new createjs.Stage("canvas");
 	
 	waterSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["water"]], 16, 16, 4, {exist:[0,2]}));
     
+	// Background image test
+	var img = new createjs.Bitmap(imageList["krabs"]);
+	img.scaleX = 21.875;
+	img.scaleY = 9.375;
+	background.addChild(img);
+	
     generateWorld();
 	alert("The world is built");
 	
+	viewWorld.addChild(background);
 	viewWorld.addChild(gameWorld);
     
     createjs.Ticker.setFPS(60);
@@ -64,18 +74,22 @@ function keyDown(event){
 		// A
 		viewWorld.x += 10;
 		viewPort.x -= 10;
+		//background.x += 5;
 	} else if (key === 68){
 		// D
 		viewWorld.x -= 10;
 		viewPort.x += 10;
+		//background.x -= 5;
 	} else if (key === 87){
 		// W
 		viewWorld.y += 10;
 		viewPort.y -= 10;
+		//background.y += 5;
 	} else if (key === 83){
 		// S
 		viewWorld.y -= 10;
 		viewPort.y += 10;
+		//background.y -= 5;
 	}
 }
 

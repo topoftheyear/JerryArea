@@ -2,7 +2,10 @@ function generateWorld(){
     
     function addBlock(i, j, block){
 		removeBlock(i, j);
-		map[i][j].addChild(new createjs.Sprite(block));
+		map[i][j].addChild(new createjs.Sprite(block, "exist"));
+		if (block === waterSheet){
+			map[i][j].alpha = 0.75;
+		}
 	}
 	
 	function removeBlock(i, j){
@@ -35,7 +38,6 @@ function generateWorld(){
 	var ironSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["iron"]], 16, 16, 0, {exist:[0]}));
 	var goldSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["gold"]], 16, 16, 0, {exist:[0]}));
 	var diamondSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["diamond"]], 16, 16, 0, {exist:[0]}));
-	var waterSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["water"]], 16, 16, 6, {exist:[0,1,2]}));
     
 	// Fill the map with containers that will contain the block object
     for (var i = 0; i < size.width; i++){
@@ -219,6 +221,59 @@ function generateWorld(){
 		}
 	}
 	alert("caves added");
+	
+	// Add water
+	var numLakes = 10;
+	while (numLakes > 0){
+		var startSuccess = false;
+		while (!startSuccess){
+			var istart = randomNumber(0,699);
+			var jstart = randomNumber(75,100);
+			if (map[istart][jstart].numChildren === 0){
+				startSuccess = true;
+			}
+		}
+		var i = istart;
+		var j = jstart;
+		var left = i;
+		var right = i;
+		var done = false;
+		var direction = "left";
+		
+		while (!done){
+			if (i === 0 || i === size.width - 1 || map[i][j].numChildren > 0){
+				if (direction === "left"){
+					direction = "right";
+					i = right;
+				} else{
+					direction = "left";
+					for (var x = left; x < right; x++){
+						if (map[x][j].numChildren === 0){
+							addBlock(x, j, waterSheet);
+						}
+					}
+					j++;
+					if (j > jstart + 50){
+						done = true;
+						numLakes--;
+					}
+				}
+			} else if (map[i][j].numChildren == 0){
+				if (direction === "left"){
+					if (i > 0){
+						left--;
+						i--;
+					}
+				} else{
+					if (i < size.width - 1){
+						right++;
+						i++;
+					}
+				}
+			}
+		}
+	}
+	alert("water added");
 	
 	// Make all dirt blocks in the upper part that have air above them be grass
 	for (var i = 0; i < size.width; i++){

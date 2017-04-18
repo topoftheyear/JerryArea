@@ -7,6 +7,8 @@ var map;
 
 var imageList = [];
 
+var waterSheet;
+
 function load(){	
 	var manifest = [
 		{src:"./Images/Dirt.png",    id:"dirt"},
@@ -38,6 +40,8 @@ function init(){
     gameWorld = new createjs.Container();
 	viewWorld = new createjs.Container();
     stage = new createjs.Stage("canvas");
+	
+	waterSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["water"]], 16, 16, 4, {exist:[0,2]}));
     
     generateWorld();
 	alert("The world is built");
@@ -45,7 +49,7 @@ function init(){
 	viewWorld.addChild(gameWorld);
     
     createjs.Ticker.setFPS(60);
-    createjs.Ticker.addEventListener("tick", tick);
+    createjs.Ticker.addEventListener("tick", function(event){tick(); stage.update(event)});
     
     stage.addChild(viewWorld);
 	stage.update();
@@ -75,11 +79,11 @@ function keyDown(event){
 	}
 }
 
-function tick(event){
-	draw(event);
+function tick(){
+	draw();
 }
 
-function draw(event){
+function draw(){
 	var xstart = Math.floor(viewPort.x / 16) - 1;
 	var ystart = Math.floor(viewPort.y / 16) - 1;
 	var xend = viewPort.width + xstart + 5;
@@ -103,14 +107,19 @@ function draw(event){
 				var block = map[i][j];
 				
 				if ((block.x + 16 > viewPort.x && block.x < viewPort.width * 16 + viewPort.x) && (block.y + 16 > viewPort.y && block.y < viewPort.height * 16 + viewPort.y)){
-					map[i][j].alpha = 1;
+					if (block.numChildren > 0 && block.alpha === 0){
+						if (block.getChildAt(0).spriteSheet === waterSheet){
+							map[i][j].alpha = 0.75;
+						} else{
+							map[i][j].alpha = 1;
+						}	
+					}
 				} else{
 					map[i][j].alpha = 0;
 				}
 			}
 		}
 	}
-	stage.update();
 }
 
 function generateSpriteSheet(source, w, h, fps, animation){

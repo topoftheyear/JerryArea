@@ -12,17 +12,17 @@ var waterSheet;
 
 function load(){	
 	var manifest = [
-		{src:"./Images/Dirt.png",    id:"dirt"},
-		{src:"./Images/Grass.png",   id:"grass"},
-		{src:"./Images/Stone.png",   id:"stone"},
-		{src:"./Images/Sand.png",    id:"sand"},
-		{src:"./Images/Gravel.png",  id:"gravel"},
-		{src:"./Images/Coal.png",    id:"coal"},
-		{src:"./Images/Iron.png",    id:"iron"},
-		{src:"./Images/Gold.png",    id:"gold"},
-		{src:"./Images/Diamond.png", id:"diamond"},
-		{src:"./Images/Water.png",   id:"water"},
-		{src:"./Images/mrkrabs.jpg", id:"krabs"},
+		{src:"./Images/Dirt.png",       id:"dirt"},
+		{src:"./Images/Grass.png",      id:"grass"},
+		{src:"./Images/Stone.png",      id:"stone"},
+		{src:"./Images/Sand.png",       id:"sand"},
+		{src:"./Images/Gravel.png",     id:"gravel"},
+		{src:"./Images/Coal.png",       id:"coal"},
+		{src:"./Images/Iron.png",       id:"iron"},
+		{src:"./Images/Gold.png",       id:"gold"},
+		{src:"./Images/Diamond.png",    id:"diamond"},
+		{src:"./Images/Water.png",      id:"water"},
+		{src:"./Images/background.png", id:"background"},
 	];
 	
 	var loader = new createjs.LoadQueue(false);
@@ -47,9 +47,7 @@ function init(){
 	waterSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["water"]], 16, 16, 4, {exist:[0,2]}));
     
 	// Background image test
-	var img = new createjs.Bitmap(imageList["krabs"]);
-	img.scaleX = 21.875;
-	img.scaleY = 9.375;
+	var img = new createjs.Bitmap(imageList["background"]);
 	background.addChild(img);
 	
     generateWorld();

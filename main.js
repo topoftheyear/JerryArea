@@ -6,6 +6,8 @@ var viewWorld;
 var background;
 var map;
 var character;
+var grounded = true;
+var verticalVelocity = 0;
 
 var imageList = [];
 
@@ -56,7 +58,8 @@ function init(){
 	alert("The world is built");
 	
 	var characterSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["character"]], 28, 42, 6, {exist:[0]}));
-	character = new createjs.Sprite(characterSheet, "exist");
+	character = new createjs.Container();
+	character.addChild(new createjs.Sprite(characterSheet, "exist"));
 	character.x += 242;
 	character.y += 235;
 	gameWorld.addChild(character);
@@ -70,42 +73,50 @@ function init(){
     stage.addChild(viewWorld);
 	stage.update();
     
-    this.document.onkeydown = keyDown;
-}
-
-function keyDown(event){
-    var key = event.keyCode;
-	
-    if (key === 65){
-		// A
-		character.x -= 10;
-		viewWorld.x += 10;
-		//viewPort.x -= 10;
-		//background.x += 5;
-	} else if (key === 68){
-		// D
-		character.x += 10;
-		viewWorld.x -= 10;
-		//viewPort.x += 10;
-		//background.x -= 5;
-	} else if (key === 87){
-		// W
-		character.y -= 10;
-		viewWorld.y += 10;
-		//viewPort.y -= 10;
-		//background.y += 5;
-	} else if (key === 83){
-		// S
-		character.y += 10;
-		viewWorld.y -= 10;
-		//viewPort.y += 10;
-		//background.y -= 5;
+	var map = {};
+	onkeydown = onkeyup = function(e){
+		e = e || event;
+		map[e.keyCode] = e.type == 'keydown';
+		/* insert conditional here */
+		if (map[32]){
+			// Space
+			grounded = false;
+			verticalVelocity = -10;
+		}
+		if (map[65]){
+			// A
+			character.x -= 10;
+			viewWorld.x += 10;
+		} else if (map[68]){
+			// D 
+			character.x += 10;
+			viewWorld.x -= 10;
+		}
 	}
+    this.document.onkeydown = onkeydown;
+	this.document.onkeyup = onkeyup;
 }
 
 function tick(){
+	physicsCheck();
 	updateCamera();
 	draw();
+}
+
+function physicsCheck(){
+	if (!grounded){
+		verticalVelocity++;
+	}
+	if (verticalVelocity !== 0){
+		character.y += verticalVelocity;
+		viewWorld.y -= verticalVelocity;
+	}
+	
+	if (verticalVelocity > 30){
+		verticalVelocity = 30;
+	} else if (verticalVelocity < -30){
+		verticalVelocity = -30;
+	}
 }
 
 function updateCamera(){

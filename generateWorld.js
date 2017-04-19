@@ -248,7 +248,7 @@ function generateWorld(){
 				} else{
 					direction = "left";
 					for (var x = left; x <= right; x++){
-						if (map[x][j].numChildren === 0){
+						if (x >= 0 && x <= size.length && map[x][j].numChildren === 0){
 							addBlock(x, j, waterSheet);
 						}
 					}

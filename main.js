@@ -5,6 +5,7 @@ var viewPort = {x:0, y:0, width:32, height:32};
 var viewWorld;
 var background;
 var map;
+var character;
 
 var imageList = [];
 
@@ -23,6 +24,7 @@ function load(){
 		{src:"./Images/Diamond.png",    id:"diamond"},
 		{src:"./Images/Water.png",      id:"water"},
 		{src:"./Images/background.png", id:"background"},
+		{src:"./Images/Character.png",  id:"character"},
 	];
 	
 	var loader = new createjs.LoadQueue(false);
@@ -53,6 +55,12 @@ function init(){
     generateWorld();
 	alert("The world is built");
 	
+	var characterSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["character"]], 28, 42, 6, {exist:[0]}));
+	character = new createjs.Sprite(characterSheet, "exist");
+	character.x += 242;
+	character.y += 235;
+	gameWorld.addChild(character);
+	
 	viewWorld.addChild(background);
 	viewWorld.addChild(gameWorld);
     
@@ -70,29 +78,39 @@ function keyDown(event){
 	
     if (key === 65){
 		// A
+		character.x -= 10;
 		viewWorld.x += 10;
-		viewPort.x -= 10;
+		//viewPort.x -= 10;
 		//background.x += 5;
 	} else if (key === 68){
 		// D
+		character.x += 10;
 		viewWorld.x -= 10;
-		viewPort.x += 10;
+		//viewPort.x += 10;
 		//background.x -= 5;
 	} else if (key === 87){
 		// W
+		character.y -= 10;
 		viewWorld.y += 10;
-		viewPort.y -= 10;
+		//viewPort.y -= 10;
 		//background.y += 5;
 	} else if (key === 83){
 		// S
+		character.y += 10;
 		viewWorld.y -= 10;
-		viewPort.y += 10;
+		//viewPort.y += 10;
 		//background.y -= 5;
 	}
 }
 
 function tick(){
+	updateCamera();
 	draw();
+}
+
+function updateCamera(){
+	viewPort.x = character.x + 14 - (viewPort.width * 16 / 2);
+	viewPort.y = character.y + 21 - (viewPort.height * 16 / 2);
 }
 
 function draw(){

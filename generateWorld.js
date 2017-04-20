@@ -51,7 +51,6 @@ function generateWorld(){
 			map[i][j] = tempContainer;
         }
     }
-	alert("containers added");
 	
 	// Generate a basic ground and sky
 	for (var i = 0; i < size.width; i++){
@@ -63,7 +62,6 @@ function generateWorld(){
             }
 		}
 	}
-	alert("ground and sky added");
 	
 	// Generate hills
 	var layerMin = 20;
@@ -90,7 +88,6 @@ function generateWorld(){
 			startingHeight = layerMin + 1;
 		}
 	}
-	alert("hills made");
     
     // Move stone layer similar to hills
     var layerMin = 90;
@@ -125,7 +122,6 @@ function generateWorld(){
 			startingHeight = layerMin + 1;
 		}
     }
-    alert("stone layer varied");
 	
 	// Add desert
 	var start = randomNumber(0, 550);
@@ -143,7 +139,6 @@ function generateWorld(){
 			}
 		}
 	}
-	alert("desert added");
 	
 	// Make stone veins
 	veinGenerator(30, stoneSheet, "up", [40,60]);
@@ -162,8 +157,6 @@ function generateWorld(){
 	
 	// Make diamond veins
 	veinGenerator(30, diamondSheet, "low", [5,15]);
-	
-	alert("material veins added");
 	
 	// Make caves
 	var numCaves = 50;
@@ -220,7 +213,6 @@ function generateWorld(){
 			}
 		}
 	}
-	alert("caves added");
 	
 	// Add water
 	var numLakes = 10;
@@ -273,7 +265,6 @@ function generateWorld(){
 			}
 		}
 	}
-	alert("water added");
 	
 	// Make all dirt blocks in the upper part that have air above them be grass
 	for (var i = 0; i < size.width; i++){
@@ -283,7 +274,6 @@ function generateWorld(){
 			}
 		}
 	}
-	alert("grassified");
 	
 	// Generates veins
 	function veinGenerator(numVeins, sheet, height, sizeBounds){

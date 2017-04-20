@@ -6,7 +6,7 @@ var viewWorld;
 var background;
 var map;
 var character;
-var grounded = true;
+var grounded = false;
 var verticalVelocity = 0;
 
 var imageList = [];
@@ -50,7 +50,7 @@ function init(){
 	
 	waterSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["water"]], 16, 16, 4, {exist:[0,2]}));
     
-	// Background image test
+	// Background image
 	var img = new createjs.Bitmap(imageList["background"]);
 	background.addChild(img);
 	
@@ -77,7 +77,6 @@ function init(){
 	onkeydown = onkeyup = function(e){
 		e = e || event;
 		map[e.keyCode] = e.type == 'keydown';
-		/* insert conditional here */
 		if (map[32]){
 			// Space
 			grounded = false;

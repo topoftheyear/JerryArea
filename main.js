@@ -8,6 +8,7 @@ var map;
 var character;
 var grounded = false;
 var verticalVelocity = 0;
+var horizontalVelocity = 0;
 
 var imageList = [];
 
@@ -77,19 +78,26 @@ function init(){
 	onkeydown = onkeyup = function(e){
 		e = e || event;
 		map[e.keyCode] = e.type == 'keydown';
-		if (map[32]){
+		if (map[65] && map[32] && grounded){
+			// A and Space
+			grounded = false;
+			verticalVelocity = -10;
+			horizontalVelocity = -5;
+		} else if (map[68] && map[32] && grounded){
+			// D and Space
+			grounded = false;
+			verticalVelocity = -10;
+			horizontalVelocity = 5;
+		} else if (map[32] /*&& grounded*/){
 			// Space
 			grounded = false;
 			verticalVelocity = -10;
-		}
-		if (map[65]){
+		} else if (map[65]){
 			// A
-			character.x -= 10;
-			viewWorld.x += 10;
+			horizontalVelocity = -5;
 		} else if (map[68]){
 			// D 
-			character.x += 10;
-			viewWorld.x -= 10;
+			horizontalVelocity = 5;
 		}
 	}
     this.document.onkeydown = onkeydown;
@@ -106,9 +114,68 @@ function physicsCheck(){
 	if (!grounded){
 		verticalVelocity++;
 	}
+	
+	var collisionOccurred = false;
 	if (verticalVelocity !== 0){
-		character.y += verticalVelocity;
-		viewWorld.y -= verticalVelocity;
+		var currentPositionY = character.y;
+		var nextPositionY = currentPositionY + verticalVelocity;
+		var leftx = character.x;
+		var rightx = character.x + 28;
+		
+		var xstart = Math.floor(viewPort.x / 16) - 1;
+		var ystart = Math.floor(viewPort.y / 16) - 1;
+		var xend = viewPort.width + xstart + 5;
+		var yend = viewPort.height + ystart + 5;
+		if (xstart < 0){
+			xstart = 0;
+		}
+		if (ystart < 0){
+			ystart = 0;
+		}
+		if (xend > size.width){
+			xend = size.width;
+		}
+		if (yend > size.height){
+			yend = size.height;
+		}
+	
+		for (var i = xstart; i < xend; i++){
+			for (var j = ystart ; j < yend; j++){
+				if (map[i][j] != undefined && map[i][j].numChildren > 0 && map[i][j].getChildAt(0).spriteSheet != waterSheet){
+					var block = map[i][j];
+					var colliding = false;
+					
+					do{
+						if (((leftx >= block.x && leftx <= block.x + 16) || (rightx >= block.x && rightx <= block.x + 16)) && 
+							((nextPositionY + 42 >= block.y && nextPositionY + 42 >= block.y + 16) || (nextPositionY >= block.y && nextPositionY <= block.y + 16))){
+							
+							collisionOccurred = true;
+							if (verticalVelocity > 0){
+								verticalVelocity--;
+							} else if (verticalVelocity < 0){
+								verticalVelocity++;
+							}
+							nextPositionY = currentPositionY + verticalVelocity;
+						} else{
+							colliding = false;
+						}
+					} while (colliding);
+				}
+			}
+		}
+	}
+	if (collisionOccurred){
+		grounded = true;
+	} else{
+		grounded = false;
+	}
+	
+	if (horizontalVelocity !== 0){
+		if (horizontalVelocity > 0){
+			horizontalVelocity--;
+		} else if (horizontalVelocity < 0){
+			horizontalVelocity++;
+		}
 	}
 	
 	if (verticalVelocity > 30){
@@ -116,6 +183,11 @@ function physicsCheck(){
 	} else if (verticalVelocity < -30){
 		verticalVelocity = -30;
 	}
+	
+	character.x += horizontalVelocity;
+	viewWorld.x -= horizontalVelocity;
+	character.y += verticalVelocity;
+	viewWorld.y -= verticalVelocity;
 }
 
 function updateCamera(){

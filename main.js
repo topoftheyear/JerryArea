@@ -74,6 +74,7 @@ function init(){
     stage.addChild(viewWorld);
 	stage.update();
     
+	// Keyboard input
 	var map = {};
 	onkeydown = onkeyup = function(e){
 		e = e || event;
@@ -88,7 +89,7 @@ function init(){
 			grounded = false;
 			verticalVelocity = -10;
 			horizontalVelocity = 5;
-		} else if (map[32] /*&& grounded*/){
+		} else if (map[32] && grounded){
 			// Space
 			grounded = false;
 			verticalVelocity = -10;
@@ -100,8 +101,8 @@ function init(){
 			horizontalVelocity = 5;
 		}
 	}
-    this.document.onkeydown = onkeydown;
-	this.document.onkeyup = onkeyup;
+    character.onkeydown = onkeydown;
+	character.onkeyup = onkeyup;
 }
 
 function tick(){
@@ -111,12 +112,10 @@ function tick(){
 }
 
 function physicsCheck(){
-	if (!grounded){
-		verticalVelocity++;
-	}
-	
 	var collisionOccurred = false;
-	if (verticalVelocity !== 0){
+	verticalVelocity++;
+	
+	if (true){
 		var currentPositionY = character.y;
 		var nextPositionY = currentPositionY + verticalVelocity;
 		var leftx = character.x;
@@ -145,21 +144,20 @@ function physicsCheck(){
 					var block = map[i][j];
 					var colliding = false;
 					
-					do{
-						if (((leftx >= block.x && leftx <= block.x + 16) || (rightx >= block.x && rightx <= block.x + 16)) && 
-							((nextPositionY + 42 >= block.y && nextPositionY + 42 >= block.y + 16) || (nextPositionY >= block.y && nextPositionY <= block.y + 16))){
-							
-							collisionOccurred = true;
-							if (verticalVelocity > 0){
-								verticalVelocity--;
-							} else if (verticalVelocity < 0){
-								verticalVelocity++;
+					for (var x = leftx; x <= rightx; x++){
+						do{
+							if (x >= block.x && x <= block.x + 16){
+								if ((nextPositionY + 42 >= block.y && nextPositionY + 42 <= block.y + 16) || (nextPositionY >= block.y && nextPositionY <= block.y + 16)){
+									colliding = true;
+									collisionOccurred = true;
+									verticalVelocity = reduce(verticalVelocity);
+									nextPositionY = currentPositionY + verticalVelocity;
+								} else{
+									colliding = false;
+								}
 							}
-							nextPositionY = currentPositionY + verticalVelocity;
-						} else{
-							colliding = false;
-						}
-					} while (colliding);
+						}while(colliding);
+					}
 				}
 			}
 		}
@@ -170,13 +168,7 @@ function physicsCheck(){
 		grounded = false;
 	}
 	
-	if (horizontalVelocity !== 0){
-		if (horizontalVelocity > 0){
-			horizontalVelocity--;
-		} else if (horizontalVelocity < 0){
-			horizontalVelocity++;
-		}
-	}
+	horizontalVelocity = reduce(horizontalVelocity);
 	
 	if (verticalVelocity > 30){
 		verticalVelocity = 30;
@@ -254,4 +246,14 @@ function randomNumber(min, max){
 	min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function reduce(number){
+	if (number > 0){
+		return(number - 1);
+	} else if (number < 0){
+		return(number + 1);
+	} else{
+		return(number);
+	}
 }

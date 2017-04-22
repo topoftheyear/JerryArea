@@ -9,6 +9,7 @@ var character;
 var grounded = false;
 var verticalVelocity = 0;
 var horizontalVelocity = 0;
+var keyboard = {keyA:false, keyD:false, keySpace:false, keyI:false};
 
 var imageList = [];
 
@@ -58,6 +59,7 @@ function init(){
     generateWorld();
 	alert("The world is built");
 	
+	// Character
 	var characterSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["character"]], 28, 42, 6, {exist:[0]}));
 	character = new createjs.Container();
 	character.addChild(new createjs.Sprite(characterSheet, "exist"));
@@ -68,6 +70,7 @@ function init(){
 	viewWorld.addChild(background);
 	viewWorld.addChild(gameWorld);
     
+	// Ticker
     createjs.Ticker.setFPS(60);
     createjs.Ticker.addEventListener("tick", function(event){tick(); stage.update(event)});
     
@@ -75,44 +78,63 @@ function init(){
 	stage.update();
     
 	// Keyboard input
-	var map = {};
+	var map = [];
 	onkeydown = onkeyup = function(e){
 		e = e || event;
 		map[e.keyCode] = e.type == 'keydown';
-		/*if (map[65] && map[32] && grounded){
-			// A and Space
-			grounded = false;
-			verticalVelocity = -15;
-			horizontalVelocity = -5;
-		} else if (map[68] && map[32] && grounded){
-			// D and Space
-			grounded = false;
-			verticalVelocity = -15;
-			horizontalVelocity = 5;
-		} else */
-		if (map[32] && grounded){
+		if (map[32]){
 			// Space
-			grounded = false;
-			verticalVelocity = -15;
+			keyboard.keySpace = true;
+		} else{
+			keyboard.keySpace = false;
 		}
 		if (map[65]){
 			// A
-			horizontalVelocity = -5;
-		} 
+			keyboard.keyA = true;
+		} else{
+			keyboard.keyA = false;
+		}
 		if (map[68]){
 			// D 
-			horizontalVelocity = 5;
+			keyboard.keyD = true;
+		} else{
+			keyboard.keyD = false;
 		}
-		
-		map = {};
+		if (map[73]){
+			// I
+			keyboard.keyI = true;
+		} else{
+			keyboard.keyI = false;
+		}
 	}
-	character.addEventListener('keypress', onkeydown);
+	character.addEventListener('keydown', onkeydown);
+	character.addEventListener('keyup', onkeyup);
 }
 
 function tick(){
+	keyboardInput();
 	physicsCheck();
 	updateCamera();
 	draw();
+}
+
+function keyboardInput(){
+	if (keyboard.keySpace){
+		if (grounded){
+			verticalVelocity -= 15;
+			grounded = false;
+		}
+	}
+	if (keyboard.keyA){
+		horizontalVelocity = -5;
+	}
+	if (keyboard.keyD){
+		horizontalVelocity = 5;
+	}
+	if (keyboard.keyI){
+		character.y -= 5;
+		viewWorld.y += 5;
+	}
 }
 
 function physicsCheck(){

@@ -79,30 +79,34 @@ function init(){
 	onkeydown = onkeyup = function(e){
 		e = e || event;
 		map[e.keyCode] = e.type == 'keydown';
-		if (map[65] && map[32] && grounded){
+		/*if (map[65] && map[32] && grounded){
 			// A and Space
 			grounded = false;
-			verticalVelocity = -10;
+			verticalVelocity = -15;
 			horizontalVelocity = -5;
 		} else if (map[68] && map[32] && grounded){
 			// D and Space
 			grounded = false;
-			verticalVelocity = -10;
+			verticalVelocity = -15;
 			horizontalVelocity = 5;
-		} else if (map[32] && grounded){
+		} else */
+		if (map[32] && grounded){
 			// Space
 			grounded = false;
-			verticalVelocity = -10;
-		} else if (map[65]){
+			verticalVelocity = -15;
+		}
+		if (map[65]){
 			// A
 			horizontalVelocity = -5;
-		} else if (map[68]){
+		} 
+		if (map[68]){
 			// D 
 			horizontalVelocity = 5;
 		}
+		
+		map = {};
 	}
-    character.onkeydown = onkeydown;
-	character.onkeyup = onkeyup;
+	character.addEventListener('keypress', onkeydown);
 }
 
 function tick(){
@@ -115,7 +119,60 @@ function physicsCheck(){
 	var collisionOccurred = false;
 	verticalVelocity++;
 	
-	if (true){
+	// Horizontal Collision
+	if (horizontalVelocity !== 0){
+		var currentPositionX = character.x;
+		var nextPositionX = currentPositionX + horizontalVelocity;
+		var topy = character.y;
+		var bottomy = character.y + 42;
+		
+		var xstart = Math.floor(viewPort.x / 16) - 1;
+		var ystart = Math.floor(viewPort.y / 16) - 1;
+		var xend = viewPort.width + xstart + 5;
+		var yend = viewPort.height + ystart + 5;
+		if (xstart < 0){
+			xstart = 0;
+		}
+		if (ystart < 0){
+			ystart = 0;
+		}
+		if (xend > size.width){
+			xend = size.width;
+		}
+		if (yend > size.height){
+			yend = size.height;
+		}
+	
+		for (var i = xstart; i < xend; i++){
+			for (var j = ystart ; j < yend; j++){
+				if (map[i][j] != undefined && map[i][j].numChildren > 0 && map[i][j].getChildAt(0).spriteSheet != waterSheet){
+					var block = map[i][j];
+					var colliding = false;
+					
+					for (var x = topy; x <= bottomy; x++){
+						do{
+							if (x >= block.y && x <= block.y + 16){
+								if (nextPositionX >= block.x && nextPositionX <= block.x + 16 || nextPositionX + 28 >= block.x && nextPositionX + 28 <= block.x + 16){
+									colliding = true;
+									horizontalVelocity = reduce(horizontalVelocity);
+									nextPositionX = currentPositionX + horizontalVelocity;
+									if (horizontalVelocity === 0){
+										colliding = false;
+										break;
+									}
+								} else{
+									colliding = false;
+								}
+							}
+						}while(colliding);
+					}
+				}
+			}
+		}
+	}
+	
+	// Vertical Collision
+	if (verticalVelocity !== 0){
 		var currentPositionY = character.y;
 		var nextPositionY = currentPositionY + verticalVelocity;
 		var leftx = character.x;
@@ -152,6 +209,10 @@ function physicsCheck(){
 									collisionOccurred = true;
 									verticalVelocity = reduce(verticalVelocity);
 									nextPositionY = currentPositionY + verticalVelocity;
+									if (verticalVelocity === 0){
+										colliding = false;
+										break;
+									}
 								} else{
 									colliding = false;
 								}
@@ -170,10 +231,10 @@ function physicsCheck(){
 	
 	horizontalVelocity = reduce(horizontalVelocity);
 	
-	if (verticalVelocity > 30){
-		verticalVelocity = 30;
-	} else if (verticalVelocity < -30){
-		verticalVelocity = -30;
+	if (verticalVelocity > 20){
+		verticalVelocity = 20;
+	} else if (verticalVelocity < -20){
+		verticalVelocity = -20;
 	}
 	
 	character.x += horizontalVelocity;

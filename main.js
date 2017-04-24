@@ -1,14 +1,16 @@
 var stage;
 var gameWorld;
 var size = {width: 700, height: 300};
-var viewPort = {x:0, y:0, width:32, height:32};
+var viewPort = {x:0, y:0, width:64, height:64};
 var viewWorld;
+var viewWorldInfo = {x:0, y:0};
 var background;
 var map;
 var character;
 var grounded = false;
 var verticalVelocity = 0;
 var horizontalVelocity = 0;
+var cheatMovement = {x:0, y:0};
 var keyboard = {keyA:false, keyD:false, keySpace:false, keyI:false, keyJ:false, keyK:false, keyL:false};
 
 var imageList = [];
@@ -56,9 +58,6 @@ function init(){
 	var img = new createjs.Bitmap(imageList["background"]);
 	background.addChild(img);
 	
-    generateWorld();
-	alert("The world is built");
-	
 	// Character
 	var characterSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["character"]], 24, 36, 6, {exist:[0]}));
 	character = new createjs.Container();
@@ -66,6 +65,9 @@ function init(){
 	character.x += 244;
 	character.y += 238;
 	gameWorld.addChild(character);
+	
+	generateWorld();
+	alert("The world is built");
 	
 	viewWorld.addChild(background);
 	viewWorld.addChild(gameWorld);
@@ -131,7 +133,9 @@ function init(){
 
 function tick(){
 	keyboardInput();
-	physicsCheck();
+	collisionCheck();
+	playerMovement();
+	positionRestraint();
 	updateCamera();
 	draw();
 }
@@ -150,24 +154,24 @@ function keyboardInput(){
 		horizontalVelocity = 5;
 	}
 	if (keyboard.keyI){
-		character.y -= 5;
-		viewWorld.y += 5;
+		cheatMovement.y = -5;
+	} else if (keyboard.keyK){
+		cheatMovement.y = 5;
+	} else{
+		cheatMovement.y = 0;
 	}
     if (keyboard.keyJ){
-		character.x -= 5;
-		viewWorld.x += 5;
+		cheatMovement.x = -5;
+	} else if (keyboard.keyL){
+		cheatMovement.x = 5;
+	} else{
+		cheatMovement.x = 0;
 	}
-    if (keyboard.keyK){
-		character.y += 5;
-		viewWorld.y -= 5;
-	}
-    if (keyboard.keyL){
-		character.x += 5;
-		viewWorld.x -= 5;
-	}
+    
+    
 }
 
-function physicsCheck(){
+function collisionCheck(){
 	var collisionOccurred = false;
 	verticalVelocity++;
 	
@@ -287,11 +291,46 @@ function physicsCheck(){
 	} else if (verticalVelocity < -20){
 		verticalVelocity = -20;
 	}
-	
+}
+
+function playerMovement(){
 	character.x += horizontalVelocity;
 	viewWorld.x -= horizontalVelocity;
+	viewWorldInfo.x -= horizontalVelocity;
 	character.y += verticalVelocity;
 	viewWorld.y -= verticalVelocity;
+	viewWorldInfo.y -= verticalVelocity;
+	
+	character.x += cheatMovement.x;
+	viewWorld.x -= cheatMovement.x;
+	viewWorldInfo.x -= cheatMovement.x;
+	character.y += cheatMovement.y;
+	viewWorld.y -= cheatMovement.y;
+	viewWorldInfo.y -= cheatMovement.y;
+}
+
+function positionRestraint(){
+	character.x = clamp(character.x, 0, size.width * 16);
+	character.y = clamp(character.y, 0, size.height * 16 + 24);
+	viewWorld.x = clamp(viewWorld.x, 0 - size.width * 16 + 512, 0);
+	viewWorld.y = clamp(viewWorld.y, 0 - size.height * 16 + 512, 0);
+	viewWorldInfo.x = clamp(viewWorldInfo.x, 0 - size.width * 16 + 512 - 256 + 12, 256 - 12);
+	viewWorldInfo.y = clamp(viewWorldInfo.y, 0 - size.height * 16 + 512 - 256 + 18, 256 - 18);
+	
+	viewWorld.x = viewWorldInfo.x;
+	viewWorld.y = viewWorldInfo.y;
+	
+	if (viewWorld.x < 0 - size.width * 16 + 512){
+		viewWorld.x = 0 - size.width * 16 + 512;
+	} else if (viewWorld.x > 0){
+		viewWorld.x = 0;
+	}
+	
+	if (viewWorld.y < 0 - size.height * 16 + 512){
+		viewWorld.y = 0 - size.height * 16 + 512;
+	} else if (viewWorld.y > 0){
+		viewWorld.y = 0;
+	}
 }
 
 function updateCamera(){
@@ -346,26 +385,4 @@ function generateSpriteSheet(source, w, h, fps, animation){
         animations: animation
     }
     return data;
-}
-
-function randomNumber(min, max){
-	if (Array.isArray(min)){
-		var a = min;
-		min = a[0];
-		max = a[1];
-	}
-	
-	min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function reduce(number){
-	if (number > 0){
-		return(number - 1);
-	} else if (number < 0){
-		return(number + 1);
-	} else{
-		return(number);
-	}
 }

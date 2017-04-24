@@ -230,7 +230,7 @@ function generateWorld(){
 		var direction = "left";
 		
 		while (!done){
-			if (i === 0 || i === size.width - 1 || map[i][j].numChildren > 0){
+			if (i === 0 || i === size.width - 1 || map[i][j] != undefined && map[i][j].numChildren > 0){
 				if (direction === "left"){
 					direction = "right";
 					i = right;
@@ -247,7 +247,7 @@ function generateWorld(){
 						numLakes--;
 					}
 				}
-			} else if (map[i][j].numChildren == 0){
+			} else if (map[i][j] != undefined && map[i][j].numChildren === 0){
 				if (direction === "left"){
 					if (i > 0){
 						left--;

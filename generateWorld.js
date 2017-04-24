@@ -3,9 +3,6 @@ function generateWorld(){
     function addBlock(i, j, block){
 		removeBlock(i, j);
 		map[i][j].addChild(new createjs.Sprite(block, "exist"));
-		if (block === waterSheet){
-			map[i][j].alpha = 0.75;
-		}
 	}
 	
 	function removeBlock(i, j){
@@ -159,7 +156,7 @@ function generateWorld(){
 	veinGenerator(30, diamondSheet, "low", [5,15]);
 	
 	// Make caves
-	var numCaves = 50;
+	var numCaves = 100;
 	for (var a = 1; a <= numCaves; a++){
 		var currentPlaced = 0;
 		var maxPlaced = randomNumber(50,2500);
@@ -215,12 +212,12 @@ function generateWorld(){
 	}
 	
 	// Add water
-	var numLakes = 10;
+	var numLakes = 20;
 	while (numLakes > 0){
 		var startSuccess = false;
 		while (!startSuccess){
 			var istart = randomNumber(0,699);
-			var jstart = randomNumber(75,100);
+			var jstart = randomNumber(75,200);
 			if (map[istart][jstart].numChildren === 0){
 				startSuccess = true;
 			}
@@ -240,12 +237,12 @@ function generateWorld(){
 				} else{
 					direction = "left";
 					for (var x = left; x <= right; x++){
-						if (x >= 0 && x <= size.length && map[x][j].numChildren === 0){
+						if (x >= 0 && x <= size.width && map[x][j].numChildren === 0){
 							addBlock(x, j, waterSheet);
 						}
 					}
 					j++;
-					if (j > jstart + 50){
+					if (j > jstart + 100){
 						done = true;
 						numLakes--;
 					}

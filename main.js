@@ -9,7 +9,7 @@ var character;
 var grounded = false;
 var verticalVelocity = 0;
 var horizontalVelocity = 0;
-var keyboard = {keyA:false, keyD:false, keySpace:false, keyI:false};
+var keyboard = {keyA:false, keyD:false, keySpace:false, keyI:false, keyJ:false, keyK:false, keyL:false};
 
 var imageList = [];
 
@@ -60,11 +60,11 @@ function init(){
 	alert("The world is built");
 	
 	// Character
-	var characterSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["character"]], 28, 42, 6, {exist:[0]}));
+	var characterSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["character"]], 24, 36, 6, {exist:[0]}));
 	character = new createjs.Container();
 	character.addChild(new createjs.Sprite(characterSheet, "exist"));
-	character.x += 242;
-	character.y += 235;
+	character.x += 244;
+	character.y += 238;
 	gameWorld.addChild(character);
 	
 	viewWorld.addChild(background);
@@ -106,6 +106,24 @@ function init(){
 		} else{
 			keyboard.keyI = false;
 		}
+        if (map[74]){
+			// J
+			keyboard.keyJ = true;
+		} else{
+			keyboard.keyJ = false;
+		}
+        if (map[75]){
+			// K
+			keyboard.keyK = true;
+		} else{
+			keyboard.keyK = false;
+		}
+        if (map[76]){
+			// I
+			keyboard.keyL = true;
+		} else{
+			keyboard.keyL = false;
+		}
 	}
 	character.addEventListener('keydown', onkeydown);
 	character.addEventListener('keyup', onkeyup);
@@ -135,6 +153,18 @@ function keyboardInput(){
 		character.y -= 5;
 		viewWorld.y += 5;
 	}
+    if (keyboard.keyJ){
+		character.x -= 5;
+		viewWorld.x += 5;
+	}
+    if (keyboard.keyK){
+		character.y += 5;
+		viewWorld.y -= 5;
+	}
+    if (keyboard.keyL){
+		character.x += 5;
+		viewWorld.x -= 5;
+	}
 }
 
 function physicsCheck(){
@@ -146,7 +176,7 @@ function physicsCheck(){
 		var currentPositionX = character.x;
 		var nextPositionX = currentPositionX + horizontalVelocity;
 		var topy = character.y;
-		var bottomy = character.y + 42;
+		var bottomy = character.y + 36;
 		
 		var xstart = Math.floor(viewPort.x / 16) - 1;
 		var ystart = Math.floor(viewPort.y / 16) - 1;
@@ -174,7 +204,7 @@ function physicsCheck(){
 					for (var x = topy; x <= bottomy; x++){
 						do{
 							if (x >= block.y && x <= block.y + 16){
-								if (nextPositionX >= block.x && nextPositionX <= block.x + 16 || nextPositionX + 28 >= block.x && nextPositionX + 28 <= block.x + 16){
+								if (nextPositionX >= block.x && nextPositionX <= block.x + 16 || nextPositionX + 24 >= block.x && nextPositionX + 24 <= block.x + 16){
 									colliding = true;
 									horizontalVelocity = reduce(horizontalVelocity);
 									nextPositionX = currentPositionX + horizontalVelocity;
@@ -198,7 +228,7 @@ function physicsCheck(){
 		var currentPositionY = character.y;
 		var nextPositionY = currentPositionY + verticalVelocity;
 		var leftx = character.x;
-		var rightx = character.x + 28;
+		var rightx = character.x + 24;
 		
 		var xstart = Math.floor(viewPort.x / 16) - 1;
 		var ystart = Math.floor(viewPort.y / 16) - 1;
@@ -226,14 +256,13 @@ function physicsCheck(){
 					for (var x = leftx; x <= rightx; x++){
 						do{
 							if (x >= block.x && x <= block.x + 16){
-								if ((nextPositionY + 42 >= block.y && nextPositionY + 42 <= block.y + 16) || (nextPositionY >= block.y && nextPositionY <= block.y + 16)){
+								if ((nextPositionY + 36 >= block.y && nextPositionY + 36 <= block.y + 16) || (nextPositionY >= block.y && nextPositionY <= block.y + 16)){
 									colliding = true;
 									collisionOccurred = true;
 									verticalVelocity = reduce(verticalVelocity);
 									nextPositionY = currentPositionY + verticalVelocity;
 									if (verticalVelocity === 0){
 										colliding = false;
-										break;
 									}
 								} else{
 									colliding = false;
@@ -246,7 +275,7 @@ function physicsCheck(){
 		}
 	}
 	if (collisionOccurred){
-		grounded = true;
+        grounded = true;
 	} else{
 		grounded = false;
 	}
@@ -271,10 +300,10 @@ function updateCamera(){
 }
 
 function draw(){
-	var xstart = Math.floor(viewPort.x / 16) - 1;
-	var ystart = Math.floor(viewPort.y / 16) - 1;
-	var xend = viewPort.width + xstart + 5;
-	var yend = viewPort.height + ystart + 5;
+	var xstart = Math.floor(viewPort.x / 16) - 2;
+	var ystart = Math.floor(viewPort.y / 16) - 2;
+	var xend = viewPort.width + xstart + 4;
+	var yend = viewPort.height + ystart + 4;
 	if (xstart < 0){
 		xstart = 0;
 	}
@@ -295,7 +324,7 @@ function draw(){
 				
 				if ((block.x + 16 > viewPort.x && block.x < viewPort.width * 16 + viewPort.x) && (block.y + 16 > viewPort.y && block.y < viewPort.height * 16 + viewPort.y)){
 					if (block.numChildren > 0 && block.alpha === 0){
-						if (block.getChildAt(0).spriteSheet === waterSheet){
+						if (block.getChildAt(0).spriteSheet == waterSheet){
 							map[i][j].alpha = 0.75;
 						} else{
 							map[i][j].alpha = 1;

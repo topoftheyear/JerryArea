@@ -368,6 +368,21 @@ function draw(){
 						} else{
 							map[i][j].alpha = 1;
 						}	
+					} else if (block.numChildren > 0){
+						if (block.getChildAt(0).spriteSheet == waterSheet){
+							if (i > 0 && i < size.width && j > 0 && j < size.height){
+								if (map[i][j+1].numChildren === 0){
+									removeBlock(i,j);
+									addBlock(i,j+1,waterSheet);
+								} else if (map[i-1][j].numChildren === 0 && map[i-1][j+1].numChildren === 0){
+									removeBlock(i,j);
+									addBlock(i-1,j,waterSheet);
+								} else if (map[i+1][j].numChildren === 0 && map[i+1][j+1].numChildren === 0){
+									removeBlock(i,j);
+									addBlock(i+1,j,waterSheet);
+								}
+							}
+						}
 					}
 				} else{
 					map[i][j].alpha = 0;

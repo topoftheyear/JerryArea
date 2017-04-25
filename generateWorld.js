@@ -1,25 +1,4 @@
 function generateWorld(){
-    
-    function addBlock(i, j, block){
-		removeBlock(i, j);
-		map[i][j].addChild(new createjs.Sprite(block, "exist"));
-	}
-	
-	function removeBlock(i, j){
-		if(typeof(map) === "undefined"){
-			console.log("AAAAAAAAAA");
-		}
-		else if (typeof(map[i]) === "undefined"){
-			console.log("BBBBBBBBBB");
-		}
-		else if (typeof(map[i][j]) === "undefined"){
-			console.log("CCCCCCCCCC");
-			debugger;
-		}
-		if (typeof(map[i]) !== "undefined" && typeof(map[i][j]) !== "undefined" && map[i][j].numChildren > 0){
-			map[i][j].removeAllChildren();
-		}
-	}
 	
 	map = new Array(size.width);
     for (var i = 0; i < map.length; i++){
@@ -242,7 +221,7 @@ function generateWorld(){
 						}
 					}
 					j++;
-					if (j > jstart + 100){
+					if (j > jstart + 50){
 						done = true;
 						numLakes--;
 					}
@@ -339,5 +318,26 @@ function generateWorld(){
 				}
 			}
 		}
+	}
+}
+
+function addBlock(i, j, block){
+	removeBlock(i, j);
+	map[i][j].addChild(new createjs.Sprite(block, "exist"));
+}
+
+function removeBlock(i, j){
+	if(typeof(map) === "undefined"){
+		console.log("AAAAAAAAAA");
+	}
+	else if (typeof(map[i]) === "undefined"){
+		console.log("BBBBBBBBBB");
+	}
+	else if (typeof(map[i][j]) === "undefined"){
+		console.log("CCCCCCCCCC");
+		debugger;
+	}
+	if (typeof(map[i]) !== "undefined" && typeof(map[i][j]) !== "undefined" && map[i][j].numChildren > 0){
+		map[i][j].removeAllChildren();
 	}
 }

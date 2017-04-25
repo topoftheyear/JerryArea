@@ -1,7 +1,7 @@
 var stage;
 var gameWorld;
 var size = {width: 700, height: 300};
-var viewPort = {x:0, y:0, width:64, height:64};
+var viewPort = {x:0, y:0, width:32, height:32};
 var viewWorld;
 var viewWorldInfo = {x:0, y:0};
 var background;
@@ -154,16 +154,16 @@ function keyboardInput(){
 		horizontalVelocity = 5;
 	}
 	if (keyboard.keyI){
-		cheatMovement.y = -5;
+		cheatMovement.y = -10;
 	} else if (keyboard.keyK){
-		cheatMovement.y = 5;
+		cheatMovement.y = 10;
 	} else{
 		cheatMovement.y = 0;
 	}
     if (keyboard.keyJ){
-		cheatMovement.x = -5;
+		cheatMovement.x = -10;
 	} else if (keyboard.keyL){
-		cheatMovement.x = 5;
+		cheatMovement.x = 10;
 	} else{
 		cheatMovement.x = 0;
 	}
@@ -370,7 +370,7 @@ function draw(){
 						}	
 					} else if (block.numChildren > 0){
 						if (block.getChildAt(0).spriteSheet == waterSheet){
-							if (i > 0 && i < size.width && j > 0 && j < size.height){
+							if (i > 0 && i < size.width - 1 && j > 0 && j < size.height - 1){
 								if (map[i][j+1].numChildren === 0){
 									removeBlock(i,j);
 									addBlock(i,j+1,waterSheet);

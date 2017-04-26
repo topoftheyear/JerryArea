@@ -1,25 +1,4 @@
 function generateWorld(){
-    
-    function addBlock(i, j, block){
-		removeBlock(i, j);
-		map[i][j].addChild(new createjs.Sprite(block));
-	}
-	
-	function removeBlock(i, j){
-		if(typeof(map) === "undefined"){
-			console.log("AAAAAAAAAA");
-		}
-		else if (typeof(map[i]) === "undefined"){
-			console.log("BBBBBBBBBB");
-		}
-		else if (typeof(map[i][j]) === "undefined"){
-			console.log("CCCCCCCCCC");
-			debugger;
-		}
-		if (typeof(map[i]) !== "undefined" && typeof(map[i][j]) !== "undefined" && map[i][j].numChildren > 0){
-			map[i][j].removeAllChildren();
-		}
-	}
 	
 	map = new Array(size.width);
     for (var i = 0; i < map.length; i++){
@@ -35,7 +14,6 @@ function generateWorld(){
 	var ironSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["iron"]], 16, 16, 0, {exist:[0]}));
 	var goldSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["gold"]], 16, 16, 0, {exist:[0]}));
 	var diamondSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["diamond"]], 16, 16, 0, {exist:[0]}));
-	var waterSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["water"]], 16, 16, 6, {exist:[0,1,2]}));
     
 	// Fill the map with containers that will contain the block object
     for (var i = 0; i < size.width; i++){
@@ -49,7 +27,6 @@ function generateWorld(){
 			map[i][j] = tempContainer;
         }
     }
-	alert("containers added");
 	
 	// Generate a basic ground and sky
 	for (var i = 0; i < size.width; i++){
@@ -61,7 +38,6 @@ function generateWorld(){
             }
 		}
 	}
-	alert("ground and sky added");
 	
 	// Generate hills
 	var layerMin = 20;
@@ -88,7 +64,6 @@ function generateWorld(){
 			startingHeight = layerMin + 1;
 		}
 	}
-	alert("hills made");
     
     // Move stone layer similar to hills
     var layerMin = 90;
@@ -123,7 +98,6 @@ function generateWorld(){
 			startingHeight = layerMin + 1;
 		}
     }
-    alert("stone layer varied");
 	
 	// Add desert
 	var start = randomNumber(0, 550);
@@ -141,7 +115,6 @@ function generateWorld(){
 			}
 		}
 	}
-	alert("desert added");
 	
 	// Make stone veins
 	veinGenerator(30, stoneSheet, "up", [40,60]);
@@ -161,10 +134,8 @@ function generateWorld(){
 	// Make diamond veins
 	veinGenerator(30, diamondSheet, "low", [5,15]);
 	
-	alert("material veins added");
-	
 	// Make caves
-	var numCaves = 50;
+	var numCaves = 100;
 	for (var a = 1; a <= numCaves; a++){
 		var currentPlaced = 0;
 		var maxPlaced = randomNumber(50,2500);
@@ -218,7 +189,58 @@ function generateWorld(){
 			}
 		}
 	}
-	alert("caves added");
+	
+	// Add water
+	var numLakes = 20;
+	while (numLakes > 0){
+		var startSuccess = false;
+		while (!startSuccess){
+			var istart = randomNumber(0,699);
+			var jstart = randomNumber(75,200);
+			if (map[istart][jstart].numChildren === 0){
+				startSuccess = true;
+			}
+		}
+		var i = istart;
+		var j = jstart;
+		var left = i;
+		var right = i;
+		var done = false;
+		var direction = "left";
+		
+		while (!done){
+			if (i === 0 || i === size.width - 1 || map[i][j] != undefined && map[i][j].numChildren > 0){
+				if (direction === "left"){
+					direction = "right";
+					i = right;
+				} else{
+					direction = "left";
+					for (var x = left; x <= right; x++){
+						if (x >= 0 && x <= size.width && map[x][j].numChildren === 0){
+							addBlock(x, j, waterSheet);
+						}
+					}
+					j++;
+					if (j > jstart + 50){
+						done = true;
+						numLakes--;
+					}
+				}
+			} else if (map[i][j] != undefined && map[i][j].numChildren === 0){
+				if (direction === "left"){
+					if (i > 0){
+						left--;
+						i--;
+					}
+				} else{
+					if (i < size.width - 1){
+						right++;
+						i++;
+					}
+				}
+			}
+		}
+	}
 	
 	// Make all dirt blocks in the upper part that have air above them be grass
 	for (var i = 0; i < size.width; i++){
@@ -228,7 +250,6 @@ function generateWorld(){
 			}
 		}
 	}
-	alert("grassified");
 	
 	// Generates veins
 	function veinGenerator(numVeins, sheet, height, sizeBounds){
@@ -297,5 +318,26 @@ function generateWorld(){
 				}
 			}
 		}
+	}
+}
+
+function addBlock(i, j, block){
+	removeBlock(i, j);
+	map[i][j].addChild(new createjs.Sprite(block, "exist"));
+}
+
+function removeBlock(i, j){
+	if(typeof(map) === "undefined"){
+		console.log("AAAAAAAAAA");
+	}
+	else if (typeof(map[i]) === "undefined"){
+		console.log("BBBBBBBBBB");
+	}
+	else if (typeof(map[i][j]) === "undefined"){
+		console.log("CCCCCCCCCC");
+		debugger;
+	}
+	if (typeof(map[i]) !== "undefined" && typeof(map[i][j]) !== "undefined" && map[i][j].numChildren > 0){
+		map[i][j].removeAllChildren();
 	}
 }

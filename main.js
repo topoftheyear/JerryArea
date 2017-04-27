@@ -6,6 +6,7 @@ var viewWorld;
 var viewWorldInfo = {x:0, y:0};
 var background;
 var map;
+var selection;
 var character;
 var grounded = false;
 var verticalVelocity = 0;
@@ -31,17 +32,18 @@ function load(){
 		{src:"./Images/Water.png",      id:"water"},
 		{src:"./Images/background.png", id:"background"},
 		{src:"./Images/Character.png",  id:"character"},
+		{src:"./Images/Selected.png",   id:"selection"},
 	];
 	
-	var loader = new createjs.LoadQueue(false);
-	loader.on("complete", init, this);
-	loader.on("fileload", handleFileLoad, this)
+	var loader = new createjs.LoadQueue(false, null, true);
+	loader.on("complete", init);
+	loader.on("fileload", handleFileLoad);
 	loader.loadManifest(manifest);
-}
-
-function handleFileLoad(f){
-	if (f.item.type == "image"){
-		imageList[f.item.id] = f.result;
+	
+	function handleFileLoad(f){
+		if (f.item.type == "image"){
+			imageList[f.item.id] = f.result;
+		}
 	}
 }
 
@@ -66,17 +68,22 @@ function init(){
 	character.y += 238;
 	gameWorld.addChild(character);
 	
+	// Block selection
+	selection = new createjs.Bitmap(imageList["selection"]);
+	
 	generateWorld();
 	alert("The world is built");
 	
 	viewWorld.addChild(background);
 	viewWorld.addChild(gameWorld);
+	viewWorld.addChild(selection);
     
 	// Ticker
     createjs.Ticker.setFPS(60);
     createjs.Ticker.addEventListener("tick", function(event){tick(); stage.update(event)});
     
     stage.addChild(viewWorld);
+	stage.enableMouseOver(120);
 	stage.update();
     
 	// Keyboard input
@@ -148,10 +155,10 @@ function keyboardInput(){
 		}
 	}
 	if (keyboard.keyA){
-		horizontalVelocity = -5;
+		horizontalVelocity = -6;
 	}
 	if (keyboard.keyD){
-		horizontalVelocity = 5;
+		horizontalVelocity = 6;
 	}
 	if (keyboard.keyI){
 		cheatMovement.y = -10;

@@ -23,6 +23,10 @@ function generateWorld(){
             tempContainer.x = i * 16;
             tempContainer.y = j * 16;
 			tempContainer.alpha = 0;
+			tempContainer.on("mouseover", function(e){
+				selection.x = this.x;
+				selection.y = this.y;
+			});
             gameWorld.addChild(tempContainer);
 			map[i][j] = tempContainer;
         }

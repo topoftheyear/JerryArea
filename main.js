@@ -84,6 +84,10 @@ function init(){
     
     stage.addChild(viewWorld);
 	stage.enableMouseOver(120);
+	gameWorld.on("mousedown", function(e){
+		var block = stage.getObjectUnderPoint(e.stageX, e.stageY);
+		destroyBlock(block);
+	});
 	stage.update();
     
 	// Keyboard input
@@ -393,6 +397,37 @@ function draw(){
 					}
 				} else{
 					map[i][j].alpha = 0;
+				}
+			}
+		}
+	}
+}
+
+function destroyBlock(remove){
+	var xstart = Math.floor(viewPort.x / 16) - 2;
+	var ystart = Math.floor(viewPort.y / 16) - 2;
+	var xend = viewPort.width + xstart + 4;
+	var yend = viewPort.height + ystart + 4;
+	if (xstart < 0){
+		xstart = 0;
+	}
+	if (ystart < 0){
+		ystart = 0;
+	}
+	if (xend > size.width){
+		xend = size.width;
+	}
+	if (yend > size.height){
+		yend = size.height;
+	}
+	
+	for (var i = xstart; i < xend; i++){
+		for (var j = ystart; j < yend; j++){
+			if (map[i][j] != undefined){
+				var block = map[i][j];
+				if (block.getChildIndex(remove) > -1){
+					removeBlock(i,j);
+					break;
 				}
 			}
 		}

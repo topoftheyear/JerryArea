@@ -8,7 +8,6 @@ function generateWorld(){
     var dirtSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["dirt"]], 16, 16, 0, {exist:[0]}));
 	var grassSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["grass"]], 16, 16, 0, {exist:[0]}));
 	var stoneSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["stone"]], 16, 16, 0, {exist:[0]}));
-	var sandSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["sand"]], 16, 16, 0, {exist:[0]}));
 	var gravelSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["gravel"]], 16, 16, 0, {exist:[0]}));
 	var coalSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["coal"]], 16, 16, 0, {exist:[0]}));
 	var ironSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["iron"]], 16, 16, 0, {exist:[0]}));

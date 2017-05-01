@@ -17,6 +17,7 @@ var keyboard = {keyA:false, keyD:false, keySpace:false, keyI:false, keyJ:false, 
 var imageList = [];
 
 var waterSheet;
+var sandSheet;
 
 function load(){	
 	document.getElementById("Intro").play();
@@ -55,6 +56,7 @@ function init(){
     stage = new createjs.Stage("canvas");
 	
 	waterSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["water"]], 16, 16, 4, {exist:[0,2]}));
+	sandSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["sand"]], 16, 16, 0, {exist:[0]}));
     
 	// Background image
 	var img = new createjs.Bitmap(imageList["background"]);
@@ -400,19 +402,20 @@ function draw(){
 							map[i][j].alpha = 1;
 						}	
 					} else if (block.numChildren > 0){
-						if (block.getChildAt(0).spriteSheet == waterSheet){
+						if (block.getChildAt(0).spriteSheet == waterSheet || block.getChildAt(0).spriteSheet == sandSheet){
 							if (i > 0 && i < size.width - 1 && j > 0 && j < size.height - 1){
+								var thing = block.getChildAt(0).spriteSheet;
 								if (map[i][j+1].numChildren === 0){
 									removeBlock(i,j);
-									addBlock(i,j+1,waterSheet);
+									addBlock(i,j+1,thing);
 									document.getElementById("THWIP").play();
 								} else if (map[i-1][j].numChildren === 0 && map[i-1][j+1].numChildren === 0){
 									removeBlock(i,j);
-									addBlock(i-1,j,waterSheet);
+									addBlock(i-1,j,thing);
 									document.getElementById("THWIP").play();
 								} else if (map[i+1][j].numChildren === 0 && map[i+1][j+1].numChildren === 0){
 									removeBlock(i,j);
-									addBlock(i+1,j,waterSheet);
+									addBlock(i+1,j,thing);
 									document.getElementById("THWIP").play();
 								}
 							}

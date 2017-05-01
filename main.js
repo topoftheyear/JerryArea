@@ -61,7 +61,7 @@ function init(){
 	background.addChild(img);
 	
 	// Character
-	var characterSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["character"]], 24, 36, 6, {exist:[0]}));
+	var characterSheet = new createjs.SpriteSheet(generateSpriteSheet([imageList["character"]], 24, 36, 4, {exist:[0], walkRight:[0,1,0,2], walkLeft:[3,4,3,5]}));
 	character = new createjs.Container();
 	character.addChild(new createjs.Sprite(characterSheet, "exist"));
 	character.x += 244;
@@ -167,9 +167,15 @@ function keyboardInput(){
 	}
 	if (keyboard.keyA){
 		horizontalVelocity = -6;
+		if (character.getChildAt(0).currentAnimation !== "walkLeft"){
+			character.getChildAt(0).gotoAndPlay("walkLeft");
+		}
 	}
 	if (keyboard.keyD){
 		horizontalVelocity = 6;
+		if (character.getChildAt(0).currentAnimation !== "walkRight"){
+			character.getChildAt(0).gotoAndPlay("walkRight");
+		}
 	}
 	if (keyboard.keyI){
 		cheatMovement.y = -10;
@@ -321,6 +327,9 @@ function playerMovement(){
 	
 	if (horizontalVelocity !== 0 && grounded){
 		document.getElementById("TSST").play();
+	}
+	if (horizontalVelocity === 0){
+		character.getChildAt(0).gotoAndPlay("exist");
 	}
 	
 	character.x += cheatMovement.x;

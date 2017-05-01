@@ -19,6 +19,7 @@ var imageList = [];
 var waterSheet;
 
 function load(){	
+	document.getElementById("Intro").play();
 	var manifest = [
 		{src:"./Images/Dirt.png",       id:"dirt"},
 		{src:"./Images/Grass.png",      id:"grass"},
@@ -48,8 +49,7 @@ function load(){
 }
 
 function init(){
-    alert("loaded");
-    gameWorld = new createjs.Container();
+	gameWorld = new createjs.Container();
 	viewWorld = new createjs.Container();
 	background = new createjs.Container();
     stage = new createjs.Stage("canvas");
@@ -70,9 +70,19 @@ function init(){
 	
 	// Block selection
 	selection = new createjs.Bitmap(imageList["selection"]);
+	selection.x = -1000
+	selection.y = -1000
 	
 	generateWorld();
-	alert("The world is built");
+	gameWorld.on("mousedown", function(e){
+		var block = stage.getObjectUnderPoint(e.stageX, e.stageY);
+		destroyBlock(block);
+		if (randomNumber(1,2) === 1){
+			document.getElementById("POP").play();
+		} else{
+			document.getElementById("PUH").play();
+		}
+	});
 	
 	viewWorld.addChild(background);
 	viewWorld.addChild(gameWorld);
@@ -84,10 +94,6 @@ function init(){
     
     stage.addChild(viewWorld);
 	stage.enableMouseOver(120);
-	gameWorld.on("mousedown", function(e){
-		var block = stage.getObjectUnderPoint(e.stageX, e.stageY);
-		destroyBlock(block);
-	});
 	stage.update();
     
 	// Keyboard input
@@ -156,6 +162,7 @@ function keyboardInput(){
 		if (grounded){
 			verticalVelocity -= 15;
 			grounded = false;
+			document.getElementById("BWEEEE").play();
 		}
 	}
 	if (keyboard.keyA){
@@ -312,6 +319,10 @@ function playerMovement(){
 	viewWorld.y -= verticalVelocity;
 	viewWorldInfo.y -= verticalVelocity;
 	
+	if (horizontalVelocity !== 0 && grounded){
+		document.getElementById("TSST").play();
+	}
+	
 	character.x += cheatMovement.x;
 	viewWorld.x -= cheatMovement.x;
 	viewWorldInfo.x -= cheatMovement.x;
@@ -385,12 +396,15 @@ function draw(){
 								if (map[i][j+1].numChildren === 0){
 									removeBlock(i,j);
 									addBlock(i,j+1,waterSheet);
+									document.getElementById("THWIP").play();
 								} else if (map[i-1][j].numChildren === 0 && map[i-1][j+1].numChildren === 0){
 									removeBlock(i,j);
 									addBlock(i-1,j,waterSheet);
+									document.getElementById("THWIP").play();
 								} else if (map[i+1][j].numChildren === 0 && map[i+1][j+1].numChildren === 0){
 									removeBlock(i,j);
 									addBlock(i+1,j,waterSheet);
+									document.getElementById("THWIP").play();
 								}
 							}
 						}
